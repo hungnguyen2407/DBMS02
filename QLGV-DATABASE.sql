@@ -1,130 +1,139 @@
+/*
+	DDL (Data Definition Language)
+*/
+
+CREATE DATABASE QLGV;
+
+USE QLGV;
 
 CREATE TABLE KHOA(
-MAKHOA VARCHAR(4) NOT NULL PRIMARY KEY, 
-TENKHOA VARCHAR(40), 
-NGTLAP SMALLDatETIME, 
-TRGKHOA CHAR(4)
-);
-
-CREATE TABLE MONHOC(
-MAMH VARCHAR(10) NOT NULL PRIMARY KEY, 
-TENMH VARCHAR(40), 
-TCLT TINYINT, 
-TCTH TINYINT, 
-MAKHOA VARCHAR(4) FOREIGN KEY REFERENCES KHOA
-);
-
-CREATE TABLE DIEUKIEN(
-MAMH VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES MONHOC(MAMH), 
-MAMH_TRUOC VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES MONHOC(MAMH), 
-PRIMARY KEY (MAMH, MAMH_TRUOC), 
-);
+MAKHOA varchar(4) NOT NULL, 
+TENKHOA varchar(40), 
+NGTLAP smalldatetime, 
+TRGKHOA char(4), 
+PRIMARY KEY (MAKHOA));
 
 CREATE TABLE GIAOVIEN(
-MAGV CHAR(4) NOT NULL PRIMARY KEY, 
-HOTEN VARCHAR(40), 
-HOCVI VARCHAR(10), 
-HOCHAM VARCHAR(10), 
-GIOITINH VARCHAR(3), 
-NGSINH SMALLDatETIME, 
-NGVL SMALLDatETIME, 
-HESO NUMERIC(4,2), 
-MUCLUONG MONEY, 
-MAKHOA VARCHAR(4) FOREIGN KEY REFERENCES KHOA(MAKHOA)
+MAGV char(4) NOT NULL, 
+HOTEN varchar(40), 
+HOCVI varchar(10), 
+HOCHAM varchar(10), 
+GIOITINH varchar(3), 
+NGSINH smalldatetime, 
+NGVL smalldatetime, 
+HESO numeric(4,2), 
+MUCLUONG money, 
+MAKHOA varchar(4), 
+PRIMARY KEY (MAGV),
+FOREIGN KEY (MAKHOA) REFERENCES KHOA(MAKHOA)
 );
 
 CREATE TABLE LOP(
-MALOP CHAR(3) NOT NULL PRIMARY KEY, 
-TENLOP VARCHAR(40), 
-TRGLOP CHAR(5), 
-SISO TINYINT, 
-MAGVCN CHAR(4) FOREIGN KEY REFERENCES GIAOVIEN(MAGV)
+MALOP char(3) NOT NULL, 
+TENLOP varchar(40), 
+TRGLOP char(5), 
+SISO tinyint, 
+MAGVCN char(4), 
+PRIMARY KEY (MALOP),
+FOREIGN KEY (MAGVCN) REFERENCES GIAOVIEN(MAGV)
 );
 
 CREATE TABLE HOCVIEN(
-MAHV CHAR(5) NOT NULL PRIMARY KEY, 
-HO VARCHAR(40), 
-TEN VARCHAR(10), 
-NGSINH SMALLDatETIME, 
-GIOITINH VARCHAR(3), 
-NOISINH VARCHAR(40), 
-MALOP CHAR(3) FOREIGN KEY REFERENCES LOP
+MAHV CHAR(5) NOT NULL, 
+HO varchar(40), 
+TEN varchar(40), 
+NGSINH smalldatetime, 
+GIOITINH varchar(3), 
+NOISINH varchar(40), 
+MALOP char(3), 
+PRIMARY KEY (MAHV),
+FOREIGN KEY (MALOP) REFERENCES LOP(MALOP)
+);
+
+CREATE TABLE MONHOC(
+MAMH varchar(10) NOT NULL, 
+TENMH varchar(40), 
+TCLT tinyint, 
+TCTH tinyint, 
+MAKHOA varchar(4), 
+PRIMARY KEY (MAMH),
+FOREIGN KEY (MAKHOA) REFERENCES KHOA(MAKHOA)
+);
+
+CREATE TABLE DIEUKIEN(
+MAMH varchar(10) NOT NULL, 
+MAMH_TRUOC varchar(10) NOT NULL, 
+PRIMARY KEY(MAMH, MAMH_TRUOC), 
+FOREIGN KEY (MAMH) REFERENCES MONHOC(MAMH), 
+FOREIGN KEY (MAMH_TRUOC) REFERENCES MONHOC(MAMH)
 );
 
 CREATE TABLE GIANGDAY(
-MALOP CHAR(3) NOT NULL FOREIGN KEY REFERENCES LOP, 
-MAMH VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES MONHOC, 
-MAGV CHAR(4) FOREIGN KEY REFERENCES GIAOVIEN,
-HOCKY TINYINT, 
-NAM SMALLINT, 
-TUNGAY SMALLDatETIME, 
-DENNGAY SMALLDatETIME, 
-PRIMARY KEY (MALOP, MAMH)
+MALOP char(3) NOT NULL, 
+MAMH varchar(10) NOT NULL, 
+MAGV char(4), 
+HOCKY tinyint, 
+NAM smallint, 
+TUNGAY smalldatetime, 
+DENNGAY smalldatetime, 
+PRIMARY KEY (MALOP,MAMH, MAGV), 
+FOREIGN KEY (MALOP) REFERENCES LOP(MALOP), 
+FOREIGN KEY (MAMH) REFERENCES MONHOC(MAMH), 
+FOREIGN KEY (MAGV) REFERENCES GIAOVIEN(MAGV)
 );
 
 CREATE TABLE KETQUATHI(
-MAHV CHAR(5) NOT NULL FOREIGN KEY REFERENCES HOCVIEN,
-MAMH VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES MONHOC,
-LT TINYINT NOT NULL,
-NGTHI SMALLDatETIME, 
-DIEM NUMERIC(4,2), 
-KQUA VARCHAR(10), 
-PRIMARY KEY(MAHV, MAMH, LT), 
+MAHV char(5) NOT NULL, 
+MAMH varchar(10) NOT NULL, 
+LANTHI tinyint NOT NULL, 
+NGTHI smalldatetime, 
+DIEM numeric(4,2), 
+KQUA varchar(10), 
+PRIMARY KEY (MAHV, MAMH, LANTHI),  
+FOREIGN KEY (MAHV) REFERENCES HOCVIEN(MAHV),  
+FOREIGN KEY (MAMH) REFERENCES MONHOC(MAMH)
 );
-INSERT INTO KHOA(MAKHOA, TENKHOA, NGTLAP, TRGKHOA)
-VALUES ('KHMT', 'KHOA HOC MAY TINH', '6/7/2005', 'GV01'),
- ('HTTT', 'HE THONG THONG TIN', '6/7/2005', 'GV02'),
- ('CNPM', 'CONG NGHE PHAN MEM', '6/7/2005', 'GV04'),
- ('MTT', 'MANG VA TRUYEN THONG', '10/20/2005', 'GV03'),
- ('KTMT', 'KY THUAT MAY TINH', '12/20/2005', NULL);
 
-INSERT INTO MONHOC(MAMH, TENMH, TCLT, TCTH, MAKHOA) VALUES
- ('THDC', 'Tin hoc dai cuong', '4', '1', 'KHMT'),
- ('CTRR', 'Cau truc roi rac', '5', '0', 'KHMT'),
- ('CSDL', 'Co so du lieu', '3', '1', 'HTTT'),
- ('CTDLGT', 'Cau truc du lieu va giai thuat', '3', '1', 'KHMT'),
- ('PTTKTT', 'Phan tich thiet ke thuat toan', '3', '0', 'KHMT'),
- ('DHMT', 'Do hoa may tinh', '3', '1', 'KHMT'),
- ('KTMT', 'Kien truc may tinh', '3', '0', 'KTMT'),
- ('TKCSDL', 'Thiet ke co so du lieu', '3', '1', 'HTTT'),
- ('PTTKHTTT', 'Phan tich thiet ke he thong thong tin', '4', '1', 'HTTT'),
- ('HDH', 'He dieu hanh', '4', '0', 'KTMT'),
- ('NMCNPM', 'Nhap mon cong nghe phan mem', '3', '0', 'CNPM'),
- ('LTCFW', 'Lap trinh C for win', '3', '1', 'CNPM'),
- ('LTHDT', 'Lap trinh huong doi tuong', '3', '1', 'CNPM');
 
-INSERT INTO DIEUKIEN(MAMH, MAMH_TRUOC) VALUES
- ('CSDL', 'CTRR'),
- ('CSDL', 'CTDLGT'),
- ('CTDLGT', 'THDC'),
- ('PTTKTT', 'THDC'),
- ('PTTKTT', 'CTDLGT'),
- ('DHMT', 'THDC'),
- ('LTHDT', 'THDC'),
- ('PTTKHTTT', 'CSDL');
+/*
 
+	DML (Data Manipulation Language)
+
+*/
+
+--KHOA
+INSERT INTO KHOA(MAKHOA, TENKHOA, NGTLAP, TRGKHOA) VALUES
+ ('KHMT', 'Khoa hoc may tinh', '6/7/2005', 'GV01'),
+('HTTT', 'He thong thong tin', '6/7/2005', 'GV02'),
+('CNPM', 'Cong nghe phan mem', '6/7/2005', 'GV04'),
+('MTT', 'Mang va truyen thong', '10/20/2005', 'GV03'),
+('KTMT', 'Ky thuat may tinh', '12/20/2005', NULL);
+
+--GIAOVIEN
 INSERT INTO GIAOVIEN(MAGV, HOTEN, HOCVI, HOCHAM, GIOITINH, NGSINH, NGVL, HESO, MUCLUONG, MAKHOA) VALUES
- ('GV01', 'Ho Thanh Son', 'PTS', 'GS', 'Nam', '2/5/1950', '11/1/2004', 5.00, 2250000, 'KHMT'),
- ('GV02', 'Tran Tam Thanh', 'TS', 'PGS', 'Nam', '12/17/1965', '4/20/2004', 4.50, 2025000, 'HTTT'),
- ('GV03', 'Do Nghiem Phung', 'TS', 'GS', 'Nu', '8/1/1950', '9/23/2004', 4.00, 1800000, 'CNPM'),
- ('GV04', 'Tran Nam Son', 'TS', 'PGS', 'Nam', '2/22/1961', '1/12/2005', 4.50, 2025000, 'KTMT'),
- ('GV05', 'Mai Thanh Danh', 'ThS', 'GV', 'Nam', '3/12/1958', '1/12/2005', 3.00, 1350000, 'HTTT'),
- ('GV06', 'Tran Doan Hung', 'TS', 'GV', 'Nam', '3/11/1953', '1/12/2005', 4.50, 2025000, 'KHMT'),
- ('GV07', 'Nguyen Minh Tien', 'ThS', 'GV', 'Nam', '11/23/1971', '3/1/2005', 4.00, 1800000, 'KHMT'),
- ('GV08', 'Le Thi Tran', 'KS', 'Null', 'Nu', '3/26/1974', '3/1/2005', 1.69, 760500, 'KHMT'),
- ('GV09', 'Nguyen To Lan', 'ThS', 'GV', 'Nu', '12/31/1966', '3/1/2005', 4.00, 1800000, 'HTTT'),
- ('GV10', 'Le Tran Anh Loan', 'KS', 'Null', 'Nu', '7/17/1972', '3/1/2005', 1.86, 837000, 'CNPM'),
- ('GV11', 'Ho Thanh Tung', 'CN', 'GV', 'Nam', '1/12/1980', '5/15/2005', 2.67, 1201500, 'MTT'),
- ('GV12', 'Tran Van Anh', 'CN', 'Null', 'Nu', '3/29/1981', '1/15/2005', 1.69, 760500, 'CNPM'),
- ('GV13', 'Nguyen Linh Dan', 'CN', 'Null', 'Nu', '5/23/1980', '5/15/2005', 1.69, 760500, 'KTMT'),
- ('GV14', 'Truong Minh Chau', 'ThS', 'GV', 'Nu', '11/30/1976', '5/15/2005', 3.00, 1350000, 'MTT'),
- ('GV15', 'Le Ha Thanh', 'ThS', 'GV', 'Nam', '5/4/1978', '5/15/2005', 3.00, 1350000, 'KHMT');
+('GV01', 'Ho Thanh Son', 'PTS', 'GS', 'Nam', '5/2/1950', '1/11/2004', 5.00, 2250000, 'KHMT'),
+('GV02', 'Tran Tam Thanh', 'TS', 'PGS', 'Nam', '12/17/1965', '4/20/2004', 4.50, 2025000, 'HTTT'),
+('GV03', 'Do Nghiem Phung', 'TS', 'GS', 'Nu', '8/1/1950', '9/23/2004', 4.00, 1800000, 'CNPM'),
+('GV04', 'Tran Nam Son', 'TS', 'PGS', 'Nam', '2/22/1961', '1/12/2005', 4.50, 2025000, 'KHMT'),
+('GV05', 'Mai Thanh Danh', 'ThS', 'GV', 'Nam', '3/12/1958', '1/12/2005', 3.00, 1350000, 'HTTT'),
+('GV06', 'Tran Doan Hung', 'TS', 'GV', 'Nam', '3/11/1953', '1/12/2005', 4.50, 2025000, 'KHMT'),
+('GV07', 'Nguyen Minh Tien', 'ThS', 'GV', 'Nam', '11/23/1971', '3/1/2005', 4.00, 1800000, 'KHMT'),
+('GV08', 'Le Thi Tran', 'KS', NULL, 'Nu', '3/26/1974', '3/1/2005', 1.69, 760500, 'KHMT'),
+('GV09', 'Nguyen To Lan', 'ThS', 'GV', 'Nu', '12/31/1966', '3/1/2005', 4.00, 1800000, 'HTTT'),
+('GV10', 'Le Tran Anh Loan', 'KS', NULL, 'Nu', '7/17/1972', '3/1/2005', 1.86, 837000, 'CNPM'),
+('GV11', 'Ho Thanh Tung', 'CN', 'GV', 'Nam', '1/12/1980', '5/15/2005', 2.67, 1201500, 'MTT'),
+('GV12', 'Tran Van Anh', 'CN', NULL, 'Nu', '3/29/1981', '5/15/2005', 1.69, 760500, 'CNPM'),
+('GV13', 'Nguyen Linh Dan', 'CN', NULL, 'Nu', '5/23/1980', '5/15/2005', 1.69, 760500, 'KHMT'),
+('GV14', 'Truong Minh Chau', 'ThS', 'GV', 'Nu', '11/30/1976', '5/15/2005', 3.00, 1350000, 'MTT'),
+('GV15', 'Le Ha Thanh', 'ThS', 'GV', 'Nam', '5/4/1978', '5/15/2005', 3.00, 1350000, 'KHMT');
 
+--LOP
 INSERT INTO LOP(MALOP, TENLOP, TRGLOP, SISO, MAGVCN) VALUES
- ('K11', 'Lop 1 khoa 1', 'K1108', 11, 'GV07'),
- ('K12', 'Lop 2 khoa 1', 'K1205', 12, 'GV09'),
- ('K13', 'Lop 3 khoa 1', 'K1305', 12, 'GV14');
+('K11', 'Lop 1 khoa 1', 'K1108', 11, 'GV07'),
+('K12', 'Lop 2 khoa 1', 'K1205', 11, 'GV09'),
+('K13', 'Lop 3 khoa 1', 'K1305', 11, 'GV14');
 
+--HOCVIEN
 INSERT INTO HOCVIEN(MAHV, HO, TEN, NGSINH, GIOITINH, NOISINH, MALOP) VALUES
  ('K1101', 'Nguyen Van', 'A', '1/27/1986', 'Nam', 'TpHCM', 'K11'),
  ('K1102', 'Tran Ngoc', 'Han', '3/14/1986', 'Nu', 'Kien Giang', 'K11'),
@@ -162,25 +171,54 @@ INSERT INTO HOCVIEN(MAHV, HO, TEN, NGSINH, GIOITINH, NOISINH, MALOP) VALUES
  ('K1311', 'Tran Minh', 'Thuc', '4/4/1986', 'Nam', 'TpHCM', 'K13'),
  ('K1312', 'Nguyen Thi Kim', 'Yen', '9/7/1986', 'Nu', 'TpHCM', 'K13');
 
-INSERT INTO GIANGDAY(MALOP, MAMH, MAGV, HOCKY, NAM, TUNGAY, DENNGAY) VALUES
- ('K11', 'THDC', 'GV07', '1', '2006', '1/2/2006', '5/12/2006'),
- ('K12', 'THDC', 'GV06', '1', '2006', '1/2/2006', '5/12/2006'),
- ('K13', 'THDC', 'GV15', '1', '2006', '1/2/2006', '5/12/2006'),
- ('K11', 'CTRR', 'GV02', '1', '2006', '1/9/2006', '5/17/2006'),
- ('K12', 'CTRR', 'GV02', '1', '2006', '1/9/2006', '5/17/2006'),
- ('K13', 'CTRR', 'GV08', '1', '2006', '1/9/2006', '5/17/2006'),
- ('K11', 'CSDL', 'GV05', '2', '2006', '6/1/2006', '7/15/2006'),
- ('K12', 'CSDL', 'GV09', '2', '2006', '6/1/2006', '7/15/2006'),
- ('K13', 'CTDLGT', 'GV15', '2', '2006', '6/1/2006', '7/15/2006'),
- ('K13', 'CSDL', 'GV05', '3', '2006', '8/1/2006', '12/15/2006'),
- ('K13', 'DHMT', 'GV07', '3', '2006', '8/1/2006', '12/15/2006'),
- ('K11', 'CTDLGT', 'GV15', '3', '2006', '8/1/2006', '12/15/2006'),
- ('K12', 'CTDLGT', 'GV15', '3', '2006', '8/1/2006', '12/15/2006'),
- ('K11', 'HDH', 'GV04', '1', '2007', '1/2/2007', '2/18/2007'),
- ('K12', 'HDH', 'GV04', '1', '2007', '1/2/2007', '3/20/2007'),
- ('K11', 'DHMT', 'GV07', '1', '2007', '2/18/2007', '3/20/2007');
+--MONHOC
+INSERT INTO MONHOC(MAMH, TENMH, TCLT, TCTH, MAKHOA) VALUES
+('THDC', 'Tin hoc dai cuong', 4, 1, 'KHMT'),
+('CTRR', 'Cau truc roi rac', 5, 0, 'KHMT'),
+('CSDL', 'Co so du lieu', 3, 1, 'HTTT'),
+('CTDLGT', 'Cau truc du lieu va giai thuat', 3, 1, 'KHMT'),
+('PTTKTT', 'Phan tich thiet ke thuat toan', 4, 0, 'KHMT'),
+('DHMT', 'Do hoa may tinh', 3, 1, 'KHMT'),
+('KTMT', 'Kien truc may tinh ', 3, 0, 'KHMT'),
+('TKCSDL', 'Thiet ke co so du lieu', 3, 1, 'HTTT'),
+('PTTKHTTT', 'Phan tich thiet ke he thong thong tin', 4, 1, 'HTTT'),
+('HDH', 'He dieu hanh', 4, 0, 'KTMT'),
+('NMCNPM', 'Nhap mon cong nghe phan mem', 3, 0, 'CNPM'),
+('LTCFW', 'Lap trinh C for win', 3, 1, 'CNPM'),
+('LTHDT', 'Lap trinh huong doi tuong', 3, 1, 'CNPM');
 
-INSERT INTO KETQUATHI(MAHV, MAMH, LT, NGTHI, DIEM, KQUA) VALUES
+--GIANGDAY
+INSERT INTO GIANGDAY(MALOP, MAMH, MAGV, HOCKY, NAM, TUNGAY, DENNGAY) VALUES
+('K11', 'THDC', 'GV07', 1, 2006, '1/2/2006', '5/12/2006'),
+('K12', 'THDC', 'GV06', 1, 2006, '1/2/2006', '5/12/2006'),
+('K13', 'THDC', 'GV15', 1, 2006, '1/2/2006', '5/12/2006'),
+('K11', 'CTRR', 'GV02', 1, 2006, '1/9/2006', '5/17/2006'),
+('K12', 'CTRR', 'GV02', 1, 2006, '1/9/2006', '5/17/2006'),
+('K13', 'CTRR', 'GV08', 1, 2006, '1/9/2006', '5/17/2006'),
+('K11', 'CSDL', 'GV05', 2, 2006, '6/1/2006', '7/15/2006'),
+('K12', 'CSDL', 'GV09', 2, 2006, '6/1/2006', '7/15/2006'),
+('K13', 'CTDLGT', 'GV15', 2, 2006, '6/1/2006', '7/15/2006'),
+('K13', 'CSDL', 'GV05', 3, 2006, '8/1/2006', '12/15/2006'),
+('K13', 'DHMT', 'GV07', 3, 2006, '8/1/2006', '12/15/2006'),
+('K11', 'CTDLGT', 'GV15', 3, 2006, '8/1/2006', '12/15/2006'),
+('K12', 'CTDLGT', 'GV15', 3, 2006, '8/1/2006', '12/15/2006'),
+('K11', 'HDH', 'GV04', 1, 2007, '1/2/2007', '2/18/2007'),
+('K12', 'HDH', 'GV04', 1, 2007, '1/2/2007', '3/20/2007'),
+('K11', 'DHMT', 'GV07', 1, 2007, '2/18/2007', '3/20/2007');
+
+--DIEUKIEN
+INSERT INTO DIEUKIEN(MAMH, MAMH_TRUOC) VALUES
+('CSDL', 'CTRR'),
+('CSDL', 'CTDLGT'),
+('CTDLGT', 'THDC'),
+('PTTKTT', 'THDC'),
+('PTTKTT', 'CTDLGT'),
+('DHMT', 'THDC'),
+('LTHDT', 'THDC'),
+('PTTKTT', 'CSDL');
+
+--KETQUATHI
+INSERT INTO KETQUATHI(MAHV, MAMH, LANTHI, NGTHI, DIEM, KQUA) VALUES
  ('K1101', 'CSDL', 1, '7/20/2006', 10.0, 'Dat'),
  ('K1101', 'CTDLGT', 1, '12/08/2006', 9.0, 'Dat'),
  ('K1101', 'THDC', 1, '5/20/2006', 9.0, 'Dat'),
