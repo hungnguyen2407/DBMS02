@@ -68,15 +68,15 @@ DROP VIEW V_HTTT;
 
 --Procedures:
 --1. Tạo thủ tục P_KQMH, cho biết bảng điểm của học viên (p_mahv).  
--- Thông tin gồm: Mã học viên, tên học viên, mã môn học, tên môn học, điểm, kết quả  
--- Thủ tục nhận 2 tham số đầu vào là mã môn học (MH) và mã  học viên (SV) 
+-- Thông tin gồm: Mã học viên, tên học viên, mã môn học, tên môn học, điểm(chỉ lấy điểm của lần thi cuối cùng), kết quả  
+-- Thủ tục nhận 2 tham số đầu vào là mã  học viên (SV) 
 GO
-CREATE PROCEDURE P_KQMH (@MaMonHoc VARCHAR(10) ,@MaHocVien CHAR(5)) AS 
+CREATE PROCEDURE P_KQMH (@MaHocVien CHAR(5)) AS 
 	SELECT hv.MAHV,hv.TEN,mh.MAMH,mh.TENMH, kqt.DIEM ,kqt.KQUA
 		FROM HOCVIEN hv   JOIN KETQUATHI kqt ON hv.MAHV=kqt.MAHV JOIN MONHOC mh ON kqt.MAMH=mh.MAMH
-			WHERE hv.MAHV=@MaHocVien AND mh.MAMH=@MaMonHoc AND kqt.LANTHI = (SELECT MAX(LANTHI) FROM KETQUATHI WHERE MAHV= @MaHocVien);
+			WHERE hv.MAHV=@MaHocVien AND kqt.LANTHI = (SELECT MAX(LANTHI) FROM KETQUATHI WHERE MAHV= @MaHocVien);
 GO
- EXECUTE P_KQMH @MaMonHoc ='CTDLGT', @MaHocVien='K1102'; 
+ EXECUTE P_KQMH @MaHocVien='K1102'; 
 
 GO 
 DROP PROCEDURE P_KQMH;
