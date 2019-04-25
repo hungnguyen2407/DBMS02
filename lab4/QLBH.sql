@@ -8,7 +8,7 @@ create table MatHang(MaMH varchar(5), TenMH nvarchar(30), Dvt int, SLTonDau int,
 
 create table NhaCC(MaNCC varchar(5), TenNCC nvarchar(30) constraint R9 check(TenNCC not like null), DiachiNCC varchar(20), NoDau money, primary key (MaNCC));
 
-create table DonHang(SoDH varchar(5), NgayDH date constraint R7 check(NgayDH not like null), MaNCC varchar(5), TriGia decimal(10,2), HinhthucTT text constraint R1 check(HinhthucTT = N'1' or HinhthucTT = N'2'), primary key (SoDH), foreign key (MaNCC) references NhaCC(MaNCC));
+create table DonHang(SoDH varchar(5), NgayDH date constraint R7 check(NgayDH not like null), MaNCC varchar(5), TriGia decimal(10,2), HinhthucTT nvarchar constraint R1 check(HinhthucTT = N'1' or HinhthucTT = N'2'), primary key (SoDH), foreign key (MaNCC) references NhaCC(MaNCC));
 
 create table CTDonHang(SoDH varchar(5), MaMH varchar(5), SLDat int, DonGia decimal(10,3), foreign key (SoDH) references DonHang(SoDH),foreign key (MaMH) references MatHang(MaMH), constraint R3 check(SLDat >= 0 and DonGia >=0));
 
